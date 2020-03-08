@@ -5,8 +5,7 @@ from tracking_by_link import *
 from tracking_by_vot import *
 from merge_strategies import *
 
-if __name__ == '__main__':
-    categories = ['__background__',  # always index 0
+vidor_categories = ['__background__',  # always index 0
                   'bread', 'cake', 'dish', 'fruits',
                   'vegetables', 'backpack', 'camera', 'cellphone',
                   'handbag', 'laptop', 'suitcase', 'ball/sports_ball',
@@ -28,11 +27,29 @@ if __name__ == '__main__':
                   'pig', 'rabbit', 'sheep/goat', 'squirrel',
                   'tiger', 'adult', 'baby', 'child']
 
-    res_dir = 'demo_videos'
+vidor_hoid_mini_categories = ["__background__",  # always index 0
+                              "adult", "aircraft", "baby", "baby_seat",
+                              "baby_walker", "backpack", "ball/sports_ball",
+                              "bat", "bench", "bicycle", "bird", "bottle",
+                              "cake", "camera", "car", "cat", "cellphone",
+                              "chair", "child", "cup", "dish", "dog", "duck",
+                              "fruits", "guitar", "handbag", "horse", "laptop",
+                              "piano", "rabbit", "racket", "refrigerator",
+                              "scooter", "screen/monitor", "skateboard", "ski",
+                              "snowboard", "sofa", "stool", "surfboard",
+                              "table", "toy", "watercraft"]
+
+ds2cates = {'VidOR': vidor_categories, 'VidOR-HOID-mini': vidor_hoid_mini_categories}
+
+
+if __name__ == '__main__':
+
+    ds = 'VidOR'
+    res_dir = 'demo_video'
     tracking_method = 'seqnms'
     data_root = os.path.join('../data', res_dir)
     output_root = os.path.join('../output', res_dir)
-    video_root = '../data/VidOR/Data/VID'
+    video_root = '../data/%s/Data/VID' % ds
 
     # load FGFA results (individual detections)
     raw_det_path = os.path.join(data_root, 'fgfa_det_raw.bin')
@@ -73,4 +90,4 @@ if __name__ == '__main__':
     # output json
     imageset_path = os.path.join(data_root, 'frame_idx.txt')
     out_json_path = os.path.join(output_root, 'fgfa_det_%s.json' % tracking_method)
-    output_json_result(imageset_path, [out_txt_path], out_json_path, categories, video_root)
+    output_json_result(imageset_path, [out_txt_path], out_json_path, ds2cates[ds], video_root)

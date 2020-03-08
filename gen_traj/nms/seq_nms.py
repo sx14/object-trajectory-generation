@@ -22,35 +22,6 @@ import cPickle as pickle
 import os
 
 from nms import nms
-
-# CLASSES = ('__background__',
-#            'airplane', 'antelope', 'bear', 'bicycle', 'bird', 'bus',
-#            'car', 'cattle', 'dog', 'domestic cat', 'elephant', 'fox',
-#            'giant panda', 'hamster', 'horse', 'lion', 'lizard', 'monkey',
-#            'motorcycle', 'rabbit', 'red panda', 'sheep', 'snake', 'squirrel',
-#            'tiger', 'train', 'turtle', 'watercraft', 'whale', 'zebra')
-
-CLASSES = ['__background__',  # always index 0
-           'bread', 'cake', 'dish', 'fruits',
-           'vegetables', 'backpack', 'camera', 'cellphone',
-           'handbag', 'laptop', 'suitcase', 'ball/sports_ball',
-           'bat', 'frisbee', 'racket', 'skateboard',
-           'ski', 'snowboard', 'surfboard', 'toy',
-           'baby_seat', 'bottle', 'chair', 'cup',
-           'electric_fan', 'faucet', 'microwave', 'oven',
-           'refrigerator', 'screen/monitor', 'sink', 'sofa',
-           'stool', 'table', 'toilet', 'guitar',
-           'piano', 'baby_walker', 'bench', 'stop_sign',
-           'traffic_light', 'aircraft', 'bicycle', 'bus/truck',
-           'car', 'motorcycle', 'scooter', 'train',
-           'watercraft', 'crab', 'bird', 'chicken',
-           'duck', 'penguin', 'fish', 'stingray',
-           'crocodile', 'snake', 'turtle', 'antelope',
-           'bear', 'camel', 'cat', 'cattle/cow',
-           'dog', 'elephant', 'hamster/rat', 'horse',
-           'kangaroo', 'leopard', 'lion', 'panda',
-           'pig', 'rabbit', 'sheep/goat', 'squirrel',
-           'tiger', 'adult', 'baby', 'child']
            
 NMS_THRESH = 0.3
 IOU_THRESH = 0.8
@@ -87,7 +58,7 @@ def createLinks(dets_all):
     links_all = []
 
     frame_num = len(dets_all[0])
-    cls_num = len(CLASSES) - 1
+    cls_num = len(dets_all)
     for cls_ind in range(cls_num):
         links_cls = []
         for frame_ind in range(frame_num - 1):
