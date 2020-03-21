@@ -93,9 +93,7 @@ def greedy_merge(all_seg_trajs, num_cls, num_frm, num_seg_frm, max_traj_num=50):
     # === filter ===
     tid2conf = {}
     for tid in tid2cnt:
-        traj_conf = tid2scr[tid] / tid2cnt[tid]
-        if traj_conf >= 0.01:
-            tid2conf[tid] = (tid2scr[tid] * 1.0 / tid2cnt[tid] + tid2cnt[tid] * 1.0 / len(all_seg_trajs)) / 2
+        tid2conf[tid] = (tid2scr[tid] * 1.0 / tid2cnt[tid] + tid2cnt[tid] * 1.0 / len(all_seg_trajs)) / 2
 
     reserved_tid_conf_list = sorted(tid2conf.items(), key=lambda item: item[1], reverse=True)[:max_traj_num]
     reserved_tids = {tid: conf for tid, conf in reserved_tid_conf_list}
