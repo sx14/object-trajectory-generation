@@ -13,8 +13,10 @@ def split_gt_instance(inst):
     traj = inst['trajectory']
     stt_fid = int(inst['start_fid'])
     last_fid = int(inst['start_fid'])
-    for curr_fid in sorted(traj.keys()[1:]):
-        if (last_fid + 1) == int(curr_fid):
+    fids = sorted(traj.keys())
+    fids.append('%06d' % (int(fids[-1]) + 1))   # exclusive end
+    for curr_fid in fids[1:]:
+        if (last_fid + 1) == int(curr_fid) and int(curr_fid) < (int(inst['end_fid']) + 1):
             last_fid += 1
         else:
             end_fid = last_fid
