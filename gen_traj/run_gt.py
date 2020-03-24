@@ -10,7 +10,7 @@ def split_gt_instance(inst):
     split_insts = []
     traj = inst['trajectory']
     stt_fid = int(inst['start_fid'])
-    last_fid = stt_fid
+    last_fid = int(inst['start_fid'])
     for curr_fid in sorted(traj.keys()[1:]):
         if (last_fid + 1) == int(curr_fid):
             last_fid += 1
@@ -23,8 +23,8 @@ def split_gt_instance(inst):
             split_inst['trajectory'] = split_traj
             split_insts.append(split_inst)
 
-            stt_fid = curr_fid
-            last_fid = curr_fid
+            stt_fid = int(curr_fid)
+            last_fid = int(curr_fid)
     return split_insts
 
 
@@ -36,7 +36,7 @@ def to_pred(gt, pred_root, data_root):
         frame_path = os.path.join(data_root, pid, vid, '000000.JPEG')
         im = cv2.imread(frame_path)
         im_h, im_w = im.shape[:2]
-        gt_insts = gt[vid]
+        gt_insts = gt[pid_vid]
         gt2pr_insts = []
         for gt_inst in gt_insts:
 
