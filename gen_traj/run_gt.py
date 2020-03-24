@@ -1,7 +1,9 @@
 import os
-from copy import deepcopy
-import cv2
+import time
 import json
+from copy import deepcopy
+
+import cv2
 from tqdm import tqdm
 
 
@@ -30,6 +32,7 @@ def split_gt_instance(inst):
 
 def to_pred(gt, pred_root, data_root):
     print('Generating prediction files with gt ...')
+    time.sleep(2)
     out = {}
     for pid_vid in tqdm(gt):
         pid, vid = pid_vid.split('/')
