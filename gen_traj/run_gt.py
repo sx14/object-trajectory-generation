@@ -31,7 +31,7 @@ def split_gt_instance(inst):
 
 
 def to_pred(gt, pred_root, data_root):
-    print('Generating prediction files with gt ...')
+    print('Generating detection results with gt ...')
     time.sleep(2)
     out = {}
     for pid_vid in tqdm(gt):
