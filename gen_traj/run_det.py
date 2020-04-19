@@ -42,13 +42,13 @@ vidor_hoid_mini_categories = ["__background__",  # always index 0
 ds2cates = {'VidOR': vidor_categories, 'VidOR-HOID-mini': vidor_hoid_mini_categories}
 
 
-def proc_video_dets(vid_dets_raw, conf_thr=0.4):
+def proc_video_dets(vid_dets_raw, conf_thr=0.4, max_per_frame=20):
     frm_num = len(vid_dets_raw[0])
     all_frm_dets = [[] for _ in range(frm_num)]
 
     for cate_idx in range(len(vid_dets_raw)):
         cate_dets_raw = vid_dets_raw[cate_idx]
-        for frm_idx in range(cate_dets_raw):
+        for frm_idx in range(len(cate_dets_raw)):
             cate_frm_dets_raw = np.array(cate_dets_raw[frm_idx])
             keep = nms(cate_frm_dets_raw, 0.3)
             cate_frm_dets = cate_frm_dets_raw[keep]
@@ -59,7 +59,7 @@ def proc_video_dets(vid_dets_raw, conf_thr=0.4):
 
     for frm_idx in range(frm_num):
         frm_dets = all_frm_dets[frm_idx]
-        all_frm_dets[frm_idx] = [frm_det for frm_det in frm_dets if frm_det[4] > conf_thr]
+        all_frm_dets[frm_idx] = [frm_det for frm_det in frm_dets if frm_det[4] > conf_thr][:max_per_frame]
 
     return all_frm_dets
 
@@ -75,8 +75,8 @@ def output_json(all_video_dets, cates, output_path):
 
             for frm_det in frm_dets:
                 xmin, ymin, xmax, ymax, score, cate_idx = frm_det
-                det = {'xmin': xmin, 'ymin': ymin,
-                       'xmax': xmax, 'ymax': ymax,
+                det = {'xmin': int(xmin), 'ymin': int(ymin),
+                       'xmax': int(xmax), 'ymax': int(ymax),
                        'score': score, 'category': cates[cate_idx]}
                 res[video_name]['%06d' % frm_idx].append(det)
 
@@ -87,7 +87,7 @@ def output_json(all_video_dets, cates, output_path):
 
 if __name__ == '__main__':
 
-    ds = 'VidOR'
+    ds = 'VidOR-HOID-mini'
     res_dir = 'vidor_hoid_mini'
     data_root = os.path.join('../data', res_dir)
     output_root = os.path.join('../output', res_dir)
@@ -111,7 +111,7 @@ if __name__ == '__main__':
         stt_frm_idx = end_frm_idx - video_frame_nums[v]
         vid_dets_raw = [all_dets_raw[c][stt_frm_idx:end_frm_idx] for c in range(len(all_dets_raw))]
         vid_dets = proc_video_dets(vid_dets_raw, 0.4)
-        all_video_dets[video_name] = vid_dets
+        all_video_dets[video_name[4:]] = vid_dets
 
     output_path = os.path.join(output_root, 'fgfa_det.json')
     output_json(all_video_dets, ds2cates[ds], output_path)
