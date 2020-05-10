@@ -29,6 +29,12 @@ def load_txt_result(out_txt_path):
     return fid2dets
 
 
+def output_speed(spf, output_path):
+    speed = 'SPF: %f\nFPS: %f\n' % (spf, 1 / spf)
+    with open(output_path, 'w') as f:
+        f.write(speed)
+
+
 def output_txt_result(all_dets, frame_ids, output_path):
     print('Output ...')
     time.sleep(1)

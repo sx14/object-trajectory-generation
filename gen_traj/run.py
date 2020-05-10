@@ -1,6 +1,7 @@
 from utils.io import *
 from tracking_by_link import *
 from tracking_by_vot import *
+from tracking_by_match import *
 from merge_strategies import *
 
 
@@ -20,7 +21,7 @@ def _gen_segments(all_dets, seg_len):
     return segs
 
 
-def track_in_video(all_dets_raw, seg_track_method, merge_method, frame_root, max_traj_num=50, num_seg_frm=30):
+def gen_traj_by_seg(all_dets_raw, seg_track_method, merge_method, frame_root, max_traj_num=50, num_seg_frm=30):
     """ Process one video """
     all_segs = _gen_segments(all_dets_raw, num_seg_frm)
     all_seg_trajs = seg_track_method(all_segs, frame_root)
@@ -32,27 +33,32 @@ def track_in_video(all_dets_raw, seg_track_method, merge_method, frame_root, max
     return all_traj_dets
 
 
+def gen_traj(all_dets_raw, max_traj_num=50):
+    """ Process one video """
+    return tracking_by_match(all_dets_raw, max_traj_num=max_traj_num)
+
+
 vidor_categories = ['__background__',  # always index 0
-                  'bread', 'cake', 'dish', 'fruits',
-                  'vegetables', 'backpack', 'camera', 'cellphone',
-                  'handbag', 'laptop', 'suitcase', 'ball/sports_ball',
-                  'bat', 'frisbee', 'racket', 'skateboard',
-                  'ski', 'snowboard', 'surfboard', 'toy',
-                  'baby_seat', 'bottle', 'chair', 'cup',
-                  'electric_fan', 'faucet', 'microwave', 'oven',
-                  'refrigerator', 'screen/monitor', 'sink', 'sofa',
-                  'stool', 'table', 'toilet', 'guitar',
-                  'piano', 'baby_walker', 'bench', 'stop_sign',
-                  'traffic_light', 'aircraft', 'bicycle', 'bus/truck',
-                  'car', 'motorcycle', 'scooter', 'train',
-                  'watercraft', 'crab', 'bird', 'chicken',
-                  'duck', 'penguin', 'fish', 'stingray',
-                  'crocodile', 'snake', 'turtle', 'antelope',
-                  'bear', 'camel', 'cat', 'cattle/cow',
-                  'dog', 'elephant', 'hamster/rat', 'horse',
-                  'kangaroo', 'leopard', 'lion', 'panda',
-                  'pig', 'rabbit', 'sheep/goat', 'squirrel',
-                  'tiger', 'adult', 'baby', 'child']
+                    'bread', 'cake', 'dish', 'fruits',
+                    'vegetables', 'backpack', 'camera', 'cellphone',
+                    'handbag', 'laptop', 'suitcase', 'ball/sports_ball',
+                    'bat', 'frisbee', 'racket', 'skateboard',
+                    'ski', 'snowboard', 'surfboard', 'toy',
+                    'baby_seat', 'bottle', 'chair', 'cup',
+                    'electric_fan', 'faucet', 'microwave', 'oven',
+                    'refrigerator', 'screen/monitor', 'sink', 'sofa',
+                    'stool', 'table', 'toilet', 'guitar',
+                    'piano', 'baby_walker', 'bench', 'stop_sign',
+                    'traffic_light', 'aircraft', 'bicycle', 'bus/truck',
+                    'car', 'motorcycle', 'scooter', 'train',
+                    'watercraft', 'crab', 'bird', 'chicken',
+                    'duck', 'penguin', 'fish', 'stingray',
+                    'crocodile', 'snake', 'turtle', 'antelope',
+                    'bear', 'camel', 'cat', 'cattle/cow',
+                    'dog', 'elephant', 'hamster/rat', 'horse',
+                    'kangaroo', 'leopard', 'lion', 'panda',
+                    'pig', 'rabbit', 'sheep/goat', 'squirrel',
+                    'tiger', 'adult', 'baby', 'child']
 
 vidor_hoid_mini_categories = ["__background__",  # always index 0
                               "adult", "aircraft", "baby", "baby_seat",
@@ -70,10 +76,10 @@ ds2cates = {'VidOR': vidor_categories, 'VidOR-HOID-mini': vidor_hoid_mini_catego
 
 
 if __name__ == '__main__':
-
+    stt_time = time.time()
     ds = 'VidOR'
-    res_dir = 'demo_video'
-    tracking_method = 'seqnms'
+    res_dir = 'vidor_hoid_mini'
+    tracking_method = 'vot'
     data_root = os.path.join('../data', res_dir)
     output_root = os.path.join('../output', res_dir)
     video_root = '../data/%s/Data/VID' % ds
@@ -85,7 +91,7 @@ if __name__ == '__main__':
     # load video info
     video_info_path = os.path.join(data_root, 'video_idx.txt')
     video_names, video_frame_nums = load_vid_frame_nums(video_info_path)
-
+    all_frame_sum = sum(video_frame_nums)
     # init result container
     all_traj_dets = []
     for c in range(len(all_dets_raw)):
@@ -101,12 +107,22 @@ if __name__ == '__main__':
         vid_frame_root = os.path.join(video_root, video_names[v])
         vid_dets_raw = [all_dets_raw[c][stt_frm_idx:end_frm_idx] for c in range(len(all_dets_raw))]
         if tracking_method == 'seqnms':
-            vid_dets_trj = track_in_video(vid_dets_raw, seqnms_track, greedy_merge, vid_frame_root)
+            vid_dets_trj = gen_traj_by_seg(vid_dets_raw, seqnms_track, greedy_merge, vid_frame_root)
         elif tracking_method == 'vot':
-            vid_dets_trj = track_in_video(vid_dets_raw, vot_track, greedy_merge, vid_frame_root)
+            vid_dets_trj = gen_traj_by_seg(vid_dets_raw, vot_track, greedy_merge, vid_frame_root)
+        elif tracking_method == 'iou':
+            vid_dets_trj = gen_traj(vid_dets_raw)
 
         for c in range(len(all_dets_raw)):
             all_traj_dets[c] += vid_dets_trj[c]
+
+    end_time = time.time()
+
+    # output speed
+    time_consume = end_time - stt_time
+    spf = time_consume / all_frame_sum
+    out_speed_path = os.path.join(output_root, 'speed_of_%s.txt' % tracking_method)
+    output_speed(spf, out_speed_path)
 
     # output txt
     if not os.path.exists(output_root):
