@@ -38,7 +38,7 @@ def tracking_by_match(vid_dets, thr=0.6, max_traj_num=50):
 
                 if next_frm_dets is None or len(next_frm_dets) == 0:
                     continue
-                curr_x1, curr_y1, curr_x2, curr_y2, tid = det
+                curr_x1, curr_y1, curr_x2, curr_y2, scr, tid = det
                 next_x1s = next_frm_dets[:, 0]
                 next_y1s = next_frm_dets[:, 1]
                 next_x2s = next_frm_dets[:, 2]
@@ -49,14 +49,16 @@ def tracking_by_match(vid_dets, thr=0.6, max_traj_num=50):
                 i_x2s = np.minimum(curr_x2, next_x2s)
                 i_y2s = np.minimum(curr_y2, next_y2s)
 
-                u_x1s = np.minimum(curr_x1, next_x1s)
-                u_y1s = np.minimum(curr_y1, next_y1s)
-                u_x2s = np.maximum(curr_x2, next_x2s)
-                u_y2s = np.maximum(curr_y2, next_y2s)
+                # u_x1s = np.minimum(curr_x1, next_x1s)
+                # u_y1s = np.minimum(curr_y1, next_y1s)
+                # u_x2s = np.maximum(curr_x2, next_x2s)
+                # u_y2s = np.maximum(curr_y2, next_y2s)
 
                 i_areas = np.maximum((i_x2s - i_x1s + 1), 0) * np.maximum((i_y2s - i_y1s + 1), 0)
-                u_areas = (u_x2s - u_x1s + 1) * (u_y2s - u_y1s + 1) - i_areas
+                u_areas = (curr_x2 - curr_x1 + 1) * (curr_y2 - curr_y1 + 1) + \
+                          (next_x2s - next_x1s + 1) * (next_y2s - next_y1s + 1) - i_areas
                 ious = i_areas / u_areas
+                print(ious)
 
                 best_det_id = np.argmax(ious)
                 if ious[best_det_id] > thr:
@@ -64,7 +66,7 @@ def tracking_by_match(vid_dets, thr=0.6, max_traj_num=50):
                     tid2scr[tid] += next_frm_dets[best_det_id, 4]
                     tid2cnt[tid] += 1
 
-            if frm_idx == len(cls_dets) - 1:
+            if frm_idx == len(cls_dets) - 2:
                 for det in next_frm_dets:
                     if det[-1] == -1:
                         det[-1] = curr_tid

@@ -79,7 +79,7 @@ if __name__ == '__main__':
     stt_time = time.time()
     ds = 'VidOR-HOID-mini'
     res_dir = 'vidor_hoid_mini'
-    tracking_method = 'vot'
+    tracking_method = 'iou'
     data_root = os.path.join('../data', res_dir)
     output_root = os.path.join('../output', res_dir)
     video_root = '../data/%s/Data/VID' % ds
