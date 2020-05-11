@@ -1,3 +1,4 @@
+import pdb
 from collections import defaultdict
 import numpy as np
 
@@ -12,6 +13,7 @@ def tracking_by_match(vid_dets, thr=0.6, max_traj_num=50):
             if frm_dets is None or len(frm_dets) == 0:
                 continue
             keep = nms(frm_dets, 0.3)
+            pdb.set_trace()
             frm_dets = frm_dets[keep]
             frm_dets_new = np.zeros((frm_dets.shape[0], frm_dets.shape[1]+1))
             frm_dets_new[:, :frm_dets.shape[1]] = frm_dets
