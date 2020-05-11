@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
     method = 'vot'
     groundtruth_path = '../data/vidor_hoid_mini/vidor_hoid_mini_val_object_gt.json'
-    prediction_path = '../output/vidor_hoid_mini/fgfa_det_%s.json'
+    prediction_path = '../output/vidor_hoid_mini/fgfa_det_%s.json' % method
 
     print('Loading ground truth from {}'.format(groundtruth_path))
     with open(groundtruth_path, 'r') as fp:
