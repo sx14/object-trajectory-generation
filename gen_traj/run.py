@@ -77,7 +77,7 @@ ds2cates = {'VidOR': vidor_categories, 'VidOR-HOID-mini': vidor_hoid_mini_catego
 
 if __name__ == '__main__':
     stt_time = time.time()
-    ds = 'VidOR'
+    ds = 'VidOR-HOID-mini'
     res_dir = 'vidor_hoid_mini'
     tracking_method = 'vot'
     data_root = os.path.join('../data', res_dir)

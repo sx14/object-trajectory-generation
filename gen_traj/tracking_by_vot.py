@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 import dlib
 from nms.nms import nms, traj_nms
-from vis.show_frame import show_boxes
+# from vis.show_frame import show_boxes
 
 
 def _track_dlib(frames, frame_idx, init_det, vis=False):
