@@ -13,7 +13,7 @@ def tracking_by_match(vid_dets, thr=0.6, max_traj_num=50):
             if frm_dets is None or len(frm_dets) == 0:
                 continue
             keep = nms(frm_dets, 0.3)
-            pdb.set_trace()
+            # pdb.set_trace()
             frm_dets = frm_dets[keep]
             frm_dets_new = np.zeros((frm_dets.shape[0], frm_dets.shape[1]+1))
             frm_dets_new[:, :frm_dets.shape[1]] = frm_dets
@@ -58,7 +58,7 @@ def tracking_by_match(vid_dets, thr=0.6, max_traj_num=50):
                 u_areas = (curr_x2 - curr_x1 + 1) * (curr_y2 - curr_y1 + 1) + \
                           (next_x2s - next_x1s + 1) * (next_y2s - next_y1s + 1) - i_areas
                 ious = i_areas / u_areas
-                print(ious)
+                # print(ious)
 
                 best_det_id = np.argmax(ious)
                 if ious[best_det_id] > thr:
